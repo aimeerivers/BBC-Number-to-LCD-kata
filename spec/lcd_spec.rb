@@ -1,32 +1,67 @@
-def lcd(number)
-  number
-end
+class LCD
+  DIGITS = {
+    '1' => [:space, :right, :space, :right, :space],
+    '2' => [:middle, :right, :middle, :left, :middle]
+  }
 
+  def initialize(number)
+    @number = number
+  end
+
+  def to_s
+    @number.to_s.split('').map {|c| DIGITS[c] }.transpose.map do |line|
+      line.map do |digit_line|
+        expand_line(digit_line)
+      end.join('')
+    end.join("\n")
+  end
+
+  private
+
+  def expand_line(symbol)
+    symbol_to_line = {
+      :space  => '   ',
+      :right  => '  |',
+      :left   => '|  ',
+      :both   => '| |',
+      :middle => ' - '
+    }
+    symbol_to_line[symbol]
+  end
+end
 
 describe "LCD" do
 
-  it "Rspec test - delete me!" do
-    lcd(1).should == 1
-  end
-
-  xit "converts the number 1" do
-    lcd(1).should == <<-result
+  it "converts the number 1" do
+     expected = <<-result
    
   |
    
   |
    
-result
+    result
+    LCD.new(1).to_s.should == expected.chomp
   end
 
-  xit "converts the number 2" do
-    lcd(2).should == <<result
+  it "converts the number 2" do
+    expected = <<-result
  - 
   |
  - 
 |  
  - 
 result
+    LCD.new(2).to_s.should == expected.chomp
   end
 
+  it "converts the number 11" do
+     expected = <<-result
+      
+  |  |
+      
+  |  |
+      
+     result
+    LCD.new(11).to_s.should == expected.chomp
+  end
 end
